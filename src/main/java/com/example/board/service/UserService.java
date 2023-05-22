@@ -22,4 +22,9 @@ public class UserService {
         return user;
         // 트랜잭션 끝
     }
+
+    @Transactional
+    public User getUser(String email){
+        return userDao.getUser(email);
+    }
 }
