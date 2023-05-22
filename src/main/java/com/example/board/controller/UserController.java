@@ -27,9 +27,9 @@ public class UserController {
         return "welcome";
     }
 
-    @GetMapping("/loginform")
+    @GetMapping("/loginForm")
     public String loginForm(){
-        return "loginform";
+        return "loginForm";
     }
 
     @PostMapping("/login")
@@ -42,6 +42,20 @@ public class UserController {
 
     @GetMapping("/logout")
     public String logout(){
+        return "redirect:/";
+    }
+
+    @GetMapping("/writeForm")
+    public String writeForm(){
+        return "writeForm";
+    }
+
+    @PostMapping("/write")
+    public String write(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content
+    ){
+        System.out.println(title+content);
         return "redirect:/";
     }
 }
