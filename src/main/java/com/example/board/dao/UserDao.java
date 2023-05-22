@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class UserDao {
     // Spring JDBC를 이용한 코드
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsertOperations insertUser;
+    private final SimpleJdbcInsertOperations insertUser;
 
     public UserDao(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -45,7 +45,7 @@ public class UserDao {
 
 
     @Transactional
-    public void  mappingUserRole(int userId){
+    public void mappingUserRole(int userId){
         String sql = "INSERT INTO user_role (user_id, role_id) VALUES (:userId, 1)";
         SqlParameterSource params = new MapSqlParameterSource("userId", userId);
         jdbcTemplate.update(sql, params);

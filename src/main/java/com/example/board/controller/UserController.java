@@ -2,9 +2,11 @@ package com.example.board.controller;
 
 import com.example.board.dto.LoginInfo;
 import com.example.board.dto.User;
+import com.example.board.service.BoardService;
 import com.example.board.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final BoardService boardService;
     @GetMapping("/userRegForm")
     public String userRegForm() {
         return "userRegForm";
@@ -71,16 +74,26 @@ public class UserController {
     }
 
     @GetMapping("/writeForm")
-    public String writeForm(){
+    public String writeForm(HttpSession httpSession, Model model){
+        LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
+        if(loginInfo == null){
+            return "redirect:/loginForm";
+        }
+        model.addAttribute("loginInfo", loginInfo);
         return "writeForm";
     }
 
     @PostMapping("/write")
     public String write(
             @RequestParam("title") String title,
-            @RequestParam("content") String content
+            @RequestParam("content") String content,
+            HttpSession httpSession
     ){
-        System.out.println(title+content);
+        LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
+        if(loginInfo == null){
+            return "redirect:/loginForm";
+        }
+        boardService.addBoard(loginInfo.getUserId(), title, content);
         return "redirect:/";
     }
 }
