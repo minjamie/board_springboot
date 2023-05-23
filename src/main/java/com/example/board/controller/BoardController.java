@@ -17,11 +17,10 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
     @GetMapping("/")
-    public String list(HttpSession httpSession, Model model) {//HttpSession, Model Spring 자동 넣어줌
+    public String list(@RequestParam(name="page", defaultValue ="1") int page, HttpSession httpSession, Model model) {//HttpSession, Model Spring 자동 넣어줌
         LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
         model.addAttribute("loginInfo", loginInfo);
 
-        int page = 1;
         int totalCount = boardService.getTotalCount();
         List<Board> list = boardService.getBoards(page);
         int pageCount = totalCount / 10;
@@ -37,9 +36,25 @@ public class BoardController {
 
     @GetMapping("/board")
     public String board(
-            @RequestParam("id") int id
+            @RequestParam("boardId") int boardId,
+            Model model
     ) {
-        System.out.println(id);
+        Board board =  boardService.getBoard(boardId);
+        model.addAttribute("board",board);
         return "board";
+    }
+
+    @GetMapping("/delete")
+    public String delete(
+            @RequestParam("boardId") int boardId,
+            HttpSession httpSession
+    ){
+        LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
+        if(loginInfo == null){
+            return "redirect:/loginForm";
+        }
+        boardService.deleteBoard(loginInfo.getUserId(), boardId);
+        return "redirect:/";
+
     }
 }

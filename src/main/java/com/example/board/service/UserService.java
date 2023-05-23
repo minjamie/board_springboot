@@ -17,7 +17,13 @@ public class UserService {
     @Transactional // 하나의 트랜잭션으로 처리하도록 - Spring Boot 트랜잭션 처리하는 트랜잭션 관리자 (Aop)가짐
     public User addUser(String name, String email, String password){
         // 트랜잭션 시작
+        User userCheck = userDao.getUser(email);
+        if(userCheck !=null){
+            throw new RuntimeException("exist email");
+        }
+
         User user = userDao.addUser(email, name, password);
+
         userDao.mappingUserRole(user.getUserId());
         return user;
         // 트랜잭션 끝
