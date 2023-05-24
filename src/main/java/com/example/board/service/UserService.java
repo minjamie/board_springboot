@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service // 스프링 관리 Bean - 트랜잭션 단위로 실행될 메서드 선언하고 있는 클래스
 @RequiredArgsConstructor
 public class UserService {
@@ -32,5 +34,10 @@ public class UserService {
     @Transactional
     public User getUser(String email){
         return userDao.getUser(email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getRole(int userId) {
+        return userDao.getRole(userId);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -51,12 +52,11 @@ public class UserController {
     ){
         try {
             User user = userService.getUser(email);
-            System.out.println(user);
             if(user.getPassword().equals(password)){
-                System.out.println("same password");
                 LoginInfo loginInfo = new LoginInfo(user.getUserId(), user.getEmail(), user.getName());
+                List<String> roles = userService.getRole(user.getUserId());
+                loginInfo.setRoles(roles);
                 httpSession.setAttribute("loginInfo", loginInfo); // 첫 번재 파라미터 key, 두번째 파라미터 값
-                System.out.println("save loginInfo in session");
 
             } else {
                 throw new RuntimeException("wrong password");

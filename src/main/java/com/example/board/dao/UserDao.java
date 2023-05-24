@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Repository // 스프링 관리하는 Beans
 public class UserDao {
@@ -62,6 +64,16 @@ public class UserDao {
         } catch (Exception ex) {
             return null;
         }
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getRole(int userId) {
+        String sql = "select r.name from user u inner join user_role ur on ur.user_id = u.user_id inner join role r on r.role_id = ur.role_id where u.user_id = :userId";
+        List<String> roles = jdbcTemplate.query(sql, Map.of("userId", userId), (rs, rowNum) -> {
+            return rs.getString(1);
+        });
+        return roles;
 
     }
 }

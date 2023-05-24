@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
@@ -39,7 +40,7 @@ public class BoardController {
             @RequestParam("boardId") int boardId,
             Model model
     ) {
-        Board board =  boardService.getBoard(boardId);
+        Board board =  boardService.getBoard(boardId, true);
         model.addAttribute("board",board);
         return "board";
     }
@@ -53,8 +54,47 @@ public class BoardController {
         if(loginInfo == null){
             return "redirect:/loginForm";
         }
-        boardService.deleteBoard(loginInfo.getUserId(), boardId);
-        return "redirect:/";
+        List<String> roles = loginInfo.getRoles();
 
+        if(roles.contains("ROLE_ADMIN")){
+            boardService.deleteBoard(boardId);
+        } else {
+            boardService.deleteBoard(loginInfo.getUserId(), boardId);
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/updateForm")
+    public String updateForm(
+            @RequestParam("boardId") int boardId,
+            Model model,
+            HttpSession httpSession
+    ){
+        LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
+        if(loginInfo == null){
+            return "redirect:/loginForm";
+        }
+        Board board = boardService.getBoard(boardId, false);
+        model.addAttribute("board", board);
+        model.addAttribute("loginInfo", loginInfo);
+        return "updateForm";
+    }
+
+    @PostMapping("/update")
+    public String update(@RequestParam("boardId") int boardId,
+                         @RequestParam("title") String title,
+                         @RequestParam("content") String content,
+                         HttpSession httpSession
+    ){
+        LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
+        if(loginInfo == null){
+            return "redirect:/loginForm";
+        }
+        Board board = boardService.getBoard(boardId, false);
+        if(board.getUserId() != loginInfo.getUserId()){
+            return "redirect:/board?boardId="+boardId;
+        }
+        boardService.updateBoard(boardId, title, content);
+        return "redirect:/board?boardId="+boardId;
     }
 }
