@@ -1,6 +1,6 @@
 package com.example.board.controller;
 
-import com.example.board.dto.Board;
+import com.example.board.domain.Board;
 import com.example.board.dto.LoginInfo;
 import com.example.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,13 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
     @GetMapping("/")
-    public String list(@RequestParam(name="page", defaultValue ="1") int page, HttpSession httpSession, Model model) {//HttpSession, Model Spring 자동 넣어줌
+    public String list(@RequestParam(name="page", defaultValue ="0") int page, HttpSession httpSession, Model model) {//HttpSession, Model Spring 자동 넣어줌
         LoginInfo loginInfo = (LoginInfo) httpSession.getAttribute("loginInfo");
         model.addAttribute("loginInfo", loginInfo);
 
-        int totalCount = boardService.getTotalCount();
+        long totalCount = boardService.getTotalCount();
         List<Board> list = boardService.getBoards(page);
-        int pageCount = totalCount / 10;
+        long pageCount = totalCount / 10;
         if(pageCount % 10 > 0){
             pageCount++;
         }
@@ -91,7 +91,7 @@ public class BoardController {
             return "redirect:/loginForm";
         }
         Board board = boardService.getBoard(boardId, false);
-        if(board.getUserId() != loginInfo.getUserId()){
+        if(board.getUser().getUserId() != loginInfo.getUserId()){
             return "redirect:/board?boardId="+boardId;
         }
         boardService.updateBoard(boardId, title, content);

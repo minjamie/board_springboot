@@ -28,9 +28,12 @@ public class Board {
     @CreationTimestamp
     private LocalDateTime regdate;
 
+    private Integer viewCnt;
+
     @ManyToOne(fetch = FetchType.LAZY) // 게시물 N --- 1 사용자,  FetchType.EAGER 기본 값으로 무조건 데이터 가져와랴
     @JoinColumn(name = "user_Id")
     private User user;
+
 
     // toString 관계 맺는 쿼리는 빼주기
     @Override
