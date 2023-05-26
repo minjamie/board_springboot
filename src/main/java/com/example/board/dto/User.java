@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -17,4 +18,6 @@ public class User {
     private String email;
     private String password;
     private LocalDateTime regDate;
+
+
 }

@@ -1,7 +1,7 @@
 package com.example.board.controller;
 
+import com.example.board.domain.User;
 import com.example.board.dto.LoginInfo;
-import com.example.board.dto.User;
 import com.example.board.service.BoardService;
 import com.example.board.service.UserService;
 import lombok.RequiredArgsConstructor;
